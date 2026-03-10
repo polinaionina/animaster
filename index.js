@@ -8,23 +8,47 @@ function addListeners() {
             const block = document.getElementById('fadeInBlock');
             animaster().fadeIn(block, 5000);
         });
+    
+    document.getElementById('resetFadeIn')
+        .addEventListener('click', function () {
+            const block = document.getElementById('fadeInBlock');
+            animaster().resetFadeIn(block);
+        });
 
     document.getElementById('fadeOutPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeOutBlock');
             animaster().fadeOut(block, 5000);
         });
-
+    
+    document.getElementById('resetFadeOut')
+        .addEventListener('click', function () {
+            const block = document.getElementById('fadeOutBlock');
+            animaster().resetFadeOut(block);
+        });
+    
     document.getElementById('movePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('moveBlock');
             animaster().move(block, 1000, {x: 100, y: 10});
+        });
+    
+    document.getElementById('resetMove')
+        .addEventListener('click', function () {
+            const block = document.getElementById('moveBlock');
+            animaster().resetMoveAndScale(block);
         });
 
     document.getElementById('scalePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('scaleBlock');
             animaster().scale(block, 1000, 1.25);
+        });
+    
+    document.getElementById('resetScale')
+        .addEventListener('click', function () {
+            const block = document.getElementById('scaleBlock');
+            animaster().resetMoveAndScale(block);
         });
 
     document.getElementById('moveAndHidePlay')
@@ -162,8 +186,36 @@ function animaster() {
             }
         };
     }
+    
+    function resetFadeIn(element) {
+        element.style.transitionDuration =  null;
+        element.classList.remove('show');
+        element.classList.add('hide');
+    }
 
-    return {fadeIn, fadeOut, move, scale, moveAndHide, showAndHide, heartBeating};
+    function resetFadeOut(element) {
+        element.style.transitionDuration =  null;
+        element.classList.add('show');
+        element.classList.remove('hide');
+    }
+
+    function resetMoveAndScale(element) {
+        element.style.transitionDuration = null;
+        element.style.transform = null;
+    }
+
+    return {    
+        fadeIn, 
+        fadeOut, 
+        move, 
+        scale, 
+        moveAndHide, 
+        showAndHide, 
+        heartBeating,
+        resetFadeIn,
+        resetFadeOut,
+        resetMoveAndScale
+    };
 }
 
 function getTransform(translation, ratio) {
