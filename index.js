@@ -299,7 +299,11 @@ function animaster() {
         resetFadeIn,
         resetFadeOut,
         resetMoveAndScale,
-        resetMoveAndHide
+        resetMoveAndHide,
+        addMove,
+        addScale,
+        addFadeIn,
+        addFadeOut
     };
 }
 
