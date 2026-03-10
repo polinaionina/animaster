@@ -1,6 +1,8 @@
 addListeners();
 
 function addListeners() {
+    let heartBeatingAnimation = null;
+
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('fadeInBlock');
@@ -24,16 +26,34 @@ function addListeners() {
             const block = document.getElementById('scaleBlock');
             animaster().scale(block, 1000, 1.25);
         });
-    
+
     document.getElementById('moveAndHidePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('moveAndHide');
             animaster().moveAndHide(block, {x: 100, y: 20}, 5000);
         });
+
     document.getElementById('showAndHidePlay')
         .addEventListener('click', function () {
             const block = document.getElementById('showAndHide');
             animaster().showAndHide(block, 3000);
+        });
+
+    document.getElementById('heartBeatingPlay')
+        .addEventListener('click', function () {
+            const block = document.getElementById('heartBeating');
+            if (heartBeatingAnimation) {
+                heartBeatingAnimation.stop();
+            }
+            heartBeatingAnimation = animaster().heartBeating(block);
+        });
+
+    document.getElementById('heartBeatingStop')
+        .addEventListener('click', function () {
+            if (heartBeatingAnimation) {
+                heartBeatingAnimation.stop();
+                heartBeatingAnimation = null;
+            }
         });
 }
 
@@ -44,13 +64,13 @@ function animaster() {
      * @param duration — Продолжительность анимации в миллисекундах
      */
     function fadeIn(element, duration) {
-        element.style.transitionDuration =  `${duration}ms`;
+        element.style.transitionDuration = `${duration}ms`;
         element.classList.remove('hide');
         element.classList.add('show');
     }
 
     function fadeOut(element, duration) {
-        element.style.transitionDuration =  `${duration}ms`;
+        element.style.transitionDuration = `${duration}ms`;
         element.classList.add('hide');
         element.classList.remove('show');
     }
@@ -73,25 +93,77 @@ function animaster() {
      * @param ratio — во сколько раз увеличить/уменьшить. Чтобы уменьшить, нужно передать значение меньше 1
      */
     function scale(element, duration, ratio) {
-        element.style.transitionDuration =  `${duration}ms`;
+        element.style.transitionDuration = `${duration}ms`;
         element.style.transform = getTransform(null, ratio);
     }
 
     function moveAndHide(element, translation, duration) {
-        firstDur = duration * 2 / 5;
-        secondDur = duration * 3 / 5;
+        const firstDur = duration * 2 / 5;
+        const secondDur = duration * 3 / 5;
         move(element, firstDur, translation);
-        setTimeout(function() { fadeOut(element, secondDur); }, firstDur);
+        setTimeout(function () {
+            fadeOut(element, secondDur);
+        }, firstDur);
     }
 
     function showAndHide(element, duration) {
-        firstDur = duration / 3;
+        const firstDur = duration / 3;
         fadeIn(element, firstDur);
-        setTimeout(function() { scale(element, firstDur, 1); }, firstDur);
-        setTimeout(function() { fadeOut(element, firstDur); }, firstDur);
+        setTimeout(function () {
+            scale(element, firstDur, 1);
+        }, firstDur);
+        setTimeout(function () {
+            fadeOut(element, firstDur);
+        }, firstDur);
     }
 
-    return { fadeIn, fadeOut, move, scale, moveAndHide, showAndHide };
+    function heartBeating(element) {
+        let active = true;
+        let timeouts = [];
+        let intervalId = null;
+
+        function beat() {
+            if (!active) return;
+
+            scale(element, 500, 1.4);
+
+            const timeoutId1 = setTimeout(() => {
+                if (active) {
+                    scale(element, 500, 1);
+                }
+            }, 500);
+
+            timeouts.push(timeoutId1);
+        }
+
+        beat();
+
+        intervalId = setInterval(() => {
+            if (active) {
+                beat();
+            }
+        }, 1000);
+
+        timeouts.push(intervalId);
+
+        return {
+            stop: function () {
+                active = false;
+                timeouts.forEach(timeoutId => clearTimeout(timeoutId));
+                timeouts = [];
+
+                if (intervalId) {
+                    clearInterval(intervalId);
+                    intervalId = null;
+                }
+
+                element.style.transform = '';
+                element.style.transitionDuration = '';
+            }
+        };
+    }
+
+    return {fadeIn, fadeOut, move, scale, moveAndHide, showAndHide, heartBeating};
 }
 
 function getTransform(translation, ratio) {
