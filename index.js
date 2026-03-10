@@ -1,7 +1,7 @@
 addListeners();
 
 function addListeners() {
-    let heartBeatingAnimation = null; // Сохраняем ссылку на текущую анимацию сердцебиения
+    let heartBeatingAnimation = null;
 
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
@@ -56,6 +56,12 @@ function addListeners() {
             const block = document.getElementById('moveAndHide');
             animaster().moveAndHide(block, {x: 100, y: 20}, 5000);
         });
+    
+    document.getElementById('resetmoveAndHide')
+        .addEventListener('click', function () {
+            const block = document.getElementById('moveAndHide');
+            animaster().resetMoveAndHide(block);
+        });
 
     document.getElementById('showAndHidePlay')
         .addEventListener('click', function () {
@@ -80,7 +86,6 @@ function addListeners() {
             }
         });
 
-    // Пример использования цепочек анимаций
     document.getElementById('chainPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('chainBlock');
@@ -278,6 +283,11 @@ function animaster() {
         element.style.transform = null;
     }
 
+    function resetMoveAndHide(element) {
+        resetMoveAndScale(element)
+        resetFadeOut(element)
+    }
+
     return {
         fadeIn,
         fadeOut,
@@ -288,7 +298,8 @@ function animaster() {
         heartBeating,
         resetFadeIn,
         resetFadeOut,
-        resetMoveAndScale
+        resetMoveAndScale,
+        resetMoveAndHide
     };
 }
 
